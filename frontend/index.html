@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack Pro — NextGen Course Registration System</title>
+    <!-- Modern Font: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="toastContainer" class="toast-container"></div>
+
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand-container">
+                <div class="logo-box">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                </div>
+                <div class="brand-text">
+                    <h2>EduTrack<span>.pro</span></h2>
+                    <p>Course ERP Portal</p>
+                </div>
+            </div>
+
+            <div class="role-switch-card">
+                <span class="role-label">WORKSPACE MODE</span>
+                <div class="role-selector-pill">
+                    <button class="role-tab active" id="btnStudentRole" onclick="switchRole('student')">Student</button>
+                    <button class="role-tab" id="btnAdminRole" onclick="switchRole('admin')">Admin</button>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <span class="nav-category">CORE MENUS</span>
+                <button class="nav-link active" onclick="showTab('dashboard')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-link" onclick="showTab('courses')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10"/></svg>
+                    <span>Browse Courses</span>
+                </button>
+                <button class="nav-link student-only" onclick="showTab('myCourses')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+                    <span>My Enrolled</span>
+                </button>
+
+                <span class="nav-category admin-only" style="display:none;">ADMINISTRATION</span>
+                <button class="nav-link admin-only" onclick="showTab('adminCourses')" style="display:none;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    <span>Manage Courses</span>
+                </button>
+                <button class="nav-link admin-only" onclick="showTab('adminStudents')" style="display:none;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>Student Database</span>
+                </button>
+                <button class="nav-link admin-only" onclick="showTab('adminRegistrations')" style="display:none;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    <span>All Registrations</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="system-status">
+                    <span class="pulse-dot"></span>
+                    <span>Backend: <strong>Live on 5000</strong></span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Body -->
+        <div class="main-body">
+            <!-- Header Bar -->
+            <header class="app-header">
+                <div class="header-search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <input type="text" id="globalQuickSearch" placeholder="Type course code, student roll number..." oninput="handleQuickSearch(this.value)">
+                </div>
+
+                <div class="student-profile-badge student-only">
+                    <div class="avatar-circle" id="userAvatar">R</div>
+                    <div class="student-meta">
+                        <label>ACTIVE STUDENT</label>
+                        <select id="studentSelector" onchange="handleStudentChange()"></select>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Work Area -->
+            <main class="content-container">
+
+                <!-- 1. DASHBOARD OVERVIEW TAB -->
+                <section id="tab-dashboard" class="tab-pane active">
+                    <div class="section-title-wrap">
+                        <div>
+                            <h1>System Metrics & Overview</h1>
+                            <p class="section-subtitle">Real-time statistics synchronized directly with MySQL Server</p>
+                        </div>
+                    </div>
+
+                    <div class="kpi-grid">
+                        <div class="kpi-card card-gradient-blue">
+                            <div class="kpi-icon-wrap">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            </div>
+                            <div class="kpi-info">
+                                <span>TOTAL ENROLLED STUDENTS</span>
+                                <h3 id="dashTotalStudents">0</h3>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card card-gradient-emerald">
+                            <div class="kpi-icon-wrap">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/></svg>
+                            </div>
+                            <div class="kpi-info">
+                                <span>ACADEMIC COURSES</span>
+                                <h3 id="dashTotalCourses">0</h3>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card card-gradient-violet">
+                            <div class="kpi-icon-wrap">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                            </div>
+                            <div class="kpi-info">
+                                <span>TOTAL COURSE ENROLLMENTS</span>
+                                <h3 id="dashTotalRegistrations">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card mt-6">
+                        <div class="card-head-flex">
+                            <div class="card-title">
+                                <h3>Quick Action Portal</h3>
+                                <p>Select your task or toggle between Student and Admin views</p>
+                            </div>
+                            <button class="btn-primary-ghost" onclick="showTab('courses')">Explore Courses &rarr;</button>
+                        </div>
+                        <div class="quick-banner">
+                            <div class="banner-pill">💡 Tip for Presentation</div>
+                            <p>To demonstrate full-stack capabilities, select a student profile from the top-right, open <strong>Browse Courses</strong>, and register for a course. Then switch to <strong>Admin Portal</strong> to see the records updated live.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. COURSES TAB -->
+                <section id="tab-courses" class="tab-pane" style="display:none;">
+                    <div class="section-title-wrap">
+                        <div>
+                            <h1>Academic Course Directory</h1>
+                            <p class="section-subtitle">Real-time credit allotment & curriculum offerings</p>
+                        </div>
+                    </div>
+
+                    <div class="filter-glass-bar">
+                        <div class="search-input-box">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                            <input type="text" id="courseSearch" placeholder="Search by name, code..." oninput="loadCourses()">
+                        </div>
+                        <div class="dropdown-group">
+                            <select id="courseDeptFilter" onchange="loadCourses()">
+                                <option value="All">All Departments</option>
+                            </select>
+                            <select id="courseSemFilter" onchange="loadCourses()">
+                                <option value="All">All Semesters</option>
+                                <option value="1">Semester 1</option>
+                                <option value="2">Semester 2</option>
+                                <option value="3">Semester 3</option>
+                                <option value="4">Semester 4</option>
+                                <option value="5">Semester 5</option>
+                                <option value="6">Semester 6</option>
+                                <option value="7">Semester 7</option>
+                                <option value="8">Semester 8</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="table-container">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>CODE</th>
+                                        <th>COURSE TITLE</th>
+                                        <th>DEPARTMENT</th>
+                                        <th>SEMESTER</th>
+                                        <th>CREDITS</th>
+                                        <th class="student-only text-right">ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="availableCoursesBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. MY REGISTRATIONS TAB -->
+                <section id="tab-myCourses" class="tab-pane student-only" style="display:none;">
+                    <div class="section-title-wrap">
+                        <div>
+                            <h1>My Registered Courses</h1>
+                            <p class="section-subtitle">Manage all active enrollments for this profile</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="table-container">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>CODE</th>
+                                        <th>COURSE NAME</th>
+                                        <th>CREDITS</th>
+                                        <th>SEMESTER</th>
+                                        <th>ENROLLED ON</th>
+                                        <th>STATUS</th>
+                                        <th class="text-right">OPERATION</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="myRegistrationsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. ADMIN: MANAGE COURSES -->
+                <section id="tab-adminCourses" class="tab-pane admin-only" style="display:none;">
+                    <div class="section-title-wrap">
+                        <div>
+                            <h1>Curriculum Management</h1>
+                            <p class="section-subtitle">Add new courses or edit credit hours</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card mb-6">
+                        <h3 id="courseFormTitle" class="form-title">Add New Course</h3>
+                        <form id="courseForm" onsubmit="handleCourseSubmit(event)">
+                            <input type="hidden" id="adminCourseId">
+                            <div class="form-grid-5">
+                                <div class="form-field">
+                                    <label>COURSE CODE *</label>
+                                    <input type="text" id="formCourseCode" placeholder="e.g. CS201" required>
+                                </div>
+                                <div class="form-field">
+                                    <label>COURSE NAME *</label>
+                                    <input type="text" id="formCourseName" placeholder="e.g. Computer Networks" required>
+                                </div>
+                                <div class="form-field">
+                                    <label>CREDITS *</label>
+                                    <input type="number" id="formCredits" min="1" max="10" placeholder="3" required>
+                                </div>
+                                <div class="form-field">
+                                    <label>DEPARTMENT *</label>
+                                    <input type="text" id="formDepartment" placeholder="e.g. CSE" required>
+                                </div>
+                                <div class="form-field">
+                                    <label>SEMESTER *</label>
+                                    <input type="number" id="formSemester" min="1" max="8" placeholder="3" required>
+                                </div>
+                            </div>
+                            <div class="form-buttons">
+                                <button type="submit" class="btn btn-save" id="saveCourseBtn">Create Course</button>
+                                <button type="button" class="btn btn-cancel" id="cancelCourseBtn" style="display:none;" onclick="resetCourseForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="table-container">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>CODE</th>
+                                        <th>COURSE NAME</th>
+                                        <th>DEPT</th>
+                                        <th>CREDITS</th>
+                                        <th>SEM</th>
+                                        <th class="text-right">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminCoursesTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. ADMIN: MANAGE STUDENTS -->
+                <section id="tab-adminStudents" class="tab-pane admin-only" style="display:none;">
+                    <div class="section-title-wrap">
+                        <div>
+                            <h1>Student Information Directory</h1>
+                            <p class="section-subtitle">Enroll, update, and audit student roll numbers</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card mb-6">
+                        <h3 id="studentFormTitle" class="form-title">Enroll New Student</h3>
+                        <form id="studentForm" onsubmit="handleStudentSubmit(event)">
+                            <input type="hidden" id="adminStudentId">
+                            <div class="form-grid-4">
+                                <div class="form-field">
+                                    <label>STUDENT FULL NAME *</label>
+                                    <input type="text" id="formStudentName" placeholder="e.g. Mohammed Sameer" required>
+                                </div>
+                                <div class="form-field">
+                                    <label>ROLL NUMBER *</label>
+                                    <input type="text" id="formStudentRoll" placeholder="e.g. 24CSE050" required>
+                                </div>
+                                <div class="form-field">
+                                    <label>BRANCH / MAJOR *</label>
+                                    <input type="text" id="formStudentBranch" placeholder="e.g. CSE" required>
+                                </div>
+                                <div class="form-field">
+                                    <label>INSTITUTION EMAIL *</label>
+                                    <input type="email" id="formStudentEmail" placeholder="e.g. sameer@college.edu" required>
+                                </div>
+                            </div>
+                            <div class="form-buttons">
+                                <button type="submit" class="btn btn-save" id="saveStudentBtn">Enroll Student</button>
+                                <button type="button" class="btn btn-cancel" id="cancelStudentBtn" style="display:none;" onclick="resetStudentForm()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="table-container">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>NAME</th>
+                                        <th>ROLL NO</th>
+                                        <th>BRANCH</th>
+                                        <th>OFFICIAL EMAIL</th>
+                                        <th class="text-right">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminStudentsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. ADMIN: ALL REGISTRATIONS -->
+                <section id="tab-adminRegistrations" class="tab-pane admin-only" style="display:none;">
+                    <div class="section-title-wrap">
+                        <div>
+                            <h1>Institution-Wide Course Enrollments</h1>
+                            <p class="section-subtitle">Complete SQL cross-joined registration audits</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="table-container">
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>REG ID</th>
+                                        <th>STUDENT</th>
+                                        <th>ROLL NO</th>
+                                        <th>COURSE</th>
+                                        <th>NAME</th>
+                                        <th>DATE</th>
+                                        <th>STATUS</th>
+                                        <th class="text-right">ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminRegistrationsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
